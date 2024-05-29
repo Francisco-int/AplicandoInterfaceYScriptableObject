@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -39,7 +39,10 @@ public class Player : MonoBehaviour
                 damageable.TakeDamage(10); // Define el daño a aplicar
             }
         }
+        
     }
+
+  
         void InteractWithNearestEnemy()
     {
         Enemy nearestEnemy = FindNearestEnemy();

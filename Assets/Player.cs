@@ -4,59 +4,70 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] float velocidad;
+    public float speed = 5f;
+    private List<Enemy> enemiesInRange = new List<Enemy>();
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
-        float move = Input.GetAxis("Horizontal") * velocidad * Time.deltaTime;
+        float move = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
         transform.Translate(move, 0, 0);
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            SaludoEnemigoCerca();
+            InteractuarEnemigosCerca();
         }
+
         if (Input.GetKeyDown(KeyCode.E))
         {
             AtacarEnemigosCerca();
         }
     }
 
-    void AtacarEnemigosCerca()
+    void InteractuarEnemigosCerca()
     {
-        Enemy enemy = EnemigosCerca();
-        if (enemy != null)
-        {
-            IDaño interfaceDaño = enemy as IDaño;
-            if (interfaceDaño != null)
-            {
-                interfaceDaño.TakeDamage(2);
-            }
-        }
-        
-    }
-
-  
-        void SaludoEnemigoCerca()
-    {
-        Enemy nearestEnemy = EnemigosCerca();
+        Enemy nearestEnemy = DetectarEnemigosCerca();
         if (nearestEnemy != null)
         {
             nearestEnemy.Accion();
         }
     }
-    Enemy EnemigosCerca()
+
+    void AtacarEnemigosCerca()
     {
-        Enemy[] enemies = FindObjectsOfType<Enemy>();
+        if (enemiesInRange.Count > 0)
+        {
+            Enemy enemigoCerca = enemiesInRange[0]; 
+            IDaño damageable = enemigoCerca as IDaño;
+            if (damageable != null)
+            {
+                damageable.TakeDamage(2);
+            }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Enemy enemy = other.GetComponent<Enemy>();
+        if (enemy != null && !enemiesInRange.Contains(enemy))
+        {
+            enemiesInRange.Add(enemy);
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        Enemy enemy = other.GetComponent<Enemy>();
+        if (enemy != null && enemiesInRange.Contains(enemy))
+        {
+            enemiesInRange.Remove(enemy);
+        }
+    }
+
+    Enemy DetectarEnemigosCerca()
+    {
         Enemy nearest = null;
         float minDistance = Mathf.Infinity;
-        foreach (Enemy enemy in enemies)
+        foreach (Enemy enemy in enemiesInRange)
         {
             float distance = Vector3.Distance(transform.position, enemy.transform.position);
             if (distance < minDistance)

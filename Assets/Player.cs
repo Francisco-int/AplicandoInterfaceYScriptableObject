@@ -20,38 +20,38 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            InteractWithNearestEnemy();
+            SaludoEnemigoCerca();
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
-            AttackNearestEnemy();
+            AtacarEnemigosCerca();
         }
     }
 
-    void AttackNearestEnemy()
+    void AtacarEnemigosCerca()
     {
-        Enemy nearestEnemy = FindNearestEnemy();
-        if (nearestEnemy != null)
+        Enemy enemy = EnemigosCerca();
+        if (enemy != null)
         {
-            ITakeDamage damageable = nearestEnemy as ITakeDamage;
-            if (damageable != null)
+            IDaño interfaceDaño = enemy as IDaño;
+            if (interfaceDaño != null)
             {
-                damageable.TakeDamage(10); // Define el daño a aplicar
+                interfaceDaño.TakeDamage(2);
             }
         }
         
     }
 
   
-        void InteractWithNearestEnemy()
+        void SaludoEnemigoCerca()
     {
-        Enemy nearestEnemy = FindNearestEnemy();
+        Enemy nearestEnemy = EnemigosCerca();
         if (nearestEnemy != null)
         {
             nearestEnemy.Accion();
         }
     }
-    Enemy FindNearestEnemy()
+    Enemy EnemigosCerca()
     {
         Enemy[] enemies = FindObjectsOfType<Enemy>();
         Enemy nearest = null;
